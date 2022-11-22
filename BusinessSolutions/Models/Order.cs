@@ -13,11 +13,12 @@ public partial class Order
     [Key]
     public int Id { get; set; }
 
+    [Required]
     [DisplayName("Номер")]
     public string? Number { get; set; }
 
     [DisplayName("Дата")]
-    public DateTime? Date { get; set; }
+    public DateTime Date { get; set; }
 
     [DisplayName("Поставщик")]
     public int ProviderId { get; set; }

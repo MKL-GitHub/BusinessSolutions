@@ -2,6 +2,7 @@
 using BusinessSolutions.Models;
 using BusinessSolutions.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace BusinessSolutions.Controllers
 {
@@ -27,11 +28,36 @@ namespace BusinessSolutions.Controllers
             }
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
+            IndexViewModel indexViewModel = new(_context, _context.Orders.OrderByDescending(p => p.Date));
 
-            var orders = _context.Orders.ToList();
-            IndexViewModel indexViewModel = new(_context.Orders, _context.Providers);
+            return View(indexViewModel);
+        }
+
+        [HttpPost]
+        public IActionResult Index(OrderFilterViewModel filter)
+        {
+            List<Order> orders = new();
+
+            foreach (var order in _context.Orders.OrderByDescending(p => p.Date))
+            {
+                if (filter.DateFrom == null && filter.DateTo == null ||
+                    filter.DateFrom == null && order.Date <= filter.DateTo ||
+                    filter.DateTo == null && order.Date >= filter.DateFrom ||
+                    order.Date >= filter.DateFrom && order.Date <= filter.DateTo)
+                {
+                    if (filter.Numbers == null && filter.ProviderNames == null ||
+                        filter.Numbers != null && filter.Numbers.Contains(order.Number) ||
+                        filter.ProviderNames != null && filter.ProviderNames.Contains(order.Provider.Name))
+                    {
+                        orders.Add(order);
+                    }
+                }
+            }
+
+            IndexViewModel indexViewModel = new(_context, orders, filter);
 
             return View(indexViewModel);
         }
@@ -40,7 +66,7 @@ namespace BusinessSolutions.Controllers
         public IActionResult Create(int? id)
         {
             TempData["success"] = null;
-            CreateViewModel createViewModel = new(_context, id);
+            OrderProviderViewModel createViewModel = new(_context, id);
 
             return View(createViewModel);
         }
@@ -93,14 +119,14 @@ namespace BusinessSolutions.Controllers
 
             dbOrder.OrderItems.Clear();
 
-            foreach(OrderItem orderItem in orderItems)
+            foreach (OrderItem orderItem in orderItems)
             {
                 dbOrder.OrderItems.Add(orderItem);
             }
 
             _context.SaveChanges();
 
-            CreateViewModel createViewModel = new(_context, dbOrder.Id);
+            OrderProviderViewModel createViewModel = new(_context, dbOrder.Id);
 
             return View(createViewModel);
         }
@@ -114,14 +140,14 @@ namespace BusinessSolutions.Controllers
                 TempData["success"] = "Заказ успешно удален!";
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Details(int orderId)
         {
-            var order = _context.Orders.First(p => p.Id == orderId);
+            DetailsViewModel detailsViewModel = new(_context, orderId);
 
-            return View(order);
+            return View(detailsViewModel);
         }
     }
 }

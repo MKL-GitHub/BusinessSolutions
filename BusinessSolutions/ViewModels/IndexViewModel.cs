@@ -1,34 +1,24 @@
-﻿using BusinessSolutions.Models;
+﻿using BusinessSolutions.Data;
+using BusinessSolutions.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BusinessSolutions.ViewModels;
 
 public class IndexViewModel
 {
-    public IndexViewModel(IEnumerable<Order> orders, IEnumerable<Provider> providers)
+    public IndexViewModel(BusinessSolutionsContext context, IEnumerable<Order> orders, OrderFilterViewModel? filter = null)
     {
         Orders = orders;
-
-        foreach (Order order in orders)
-        {
-            if (!string.IsNullOrEmpty(order.Number))
-            {
-                OrderNumbers.Add(order.Number);
-            }
-        }
-
-        foreach (Provider provider in providers)
-        {
-            if (!string.IsNullOrEmpty(provider.Name))
-            {
-                ProviderNames.Add(provider.Name);
-            }
-        }
+        OrderNumbers = new(context.Orders.Select(p => p.Number).Distinct());
+        ProviderNames = new(context.Providers.Select(p => p.Name));
+        Filter = filter != null ? filter : new();
     }
 
     public IEnumerable<Order> Orders { get; set; } = new List<Order>();
 
-    public List<string> OrderNumbers { get; set; } = new();
+    public SelectList OrderNumbers { get; set; }
 
-    public List<string> ProviderNames { get; set; } = new();
+    public SelectList ProviderNames { get; set; }
 
+    public OrderFilterViewModel Filter { get; set; }
 }

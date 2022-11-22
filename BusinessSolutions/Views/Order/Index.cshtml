@@ -1,61 +1,69 @@
-﻿@model BusinessSolutions.ViewModels.IndexViewModel
+﻿@using System.Text.Json
+@using BusinessSolutions.ViewModels
+@model BusinessSolutions.ViewModels.IndexViewModel
 
 @{
     ViewData["Title"] = "Index";
+
+    string dateFromString = Model.Filter.DateFrom is DateTime dateFrom ? dateFrom.ToString("yyyy-MM-dd HH:mm").Replace(' ', 'T') : "";
+    string dateToString = Model.Filter.DateTo is DateTime dateTo ? dateTo.ToString("yyyy-MM-dd HH:mm").Replace(' ', 'T') : "";
+    string numbers = Model.Filter.Numbers is IEnumerable<string> orderNumbers ? JsonSerializer.Serialize(orderNumbers) : "";
+    string providerNames = Model.Filter.ProviderNames is IEnumerable<string> orderProviderNames ? JsonSerializer.Serialize(orderProviderNames) : "";
 }
 
 <header>Заказы</header>
 
 <aside>
-    <div onclick="filter()" class="btn btn-sm btn-info filterButton">Отфильтровать</div>
-    <table>
-        <tbody>
-            <tr>
-                <td rowspan="2" style="border: 0;">
-                    <span>По дате:</span>
-                </td>
-                <td style="border: 0;">
-                    <label for="dateFrom">С:</label>
-                    <input type="datetime-local" id="dateFrom" class="bg-dark text-white" style="float: right; width: 180px; margin-left: 5px;" />
-
-                </td>
-                <td style="border: 0;">
-                    <a onclick="clearDate('dateFrom')" class="btn btn-sm btn-outline-info">X</a>
-                </td>
-            </tr>
-            <tr>
-                <td style="border: 0;">
-                    <label for="dateTo">По:</label>
-                    <input type="datetime-local" id="dateTo" class="bg-dark text-white" style="float: right; width: 180px; margin-left: 5px;" />
-                </td>
-                <td style="border: 0;">
-                    <a onclick="clearDate('dateTo')" class="btn btn-sm btn-outline-info">X</a>
-                </td>
-            </tr>
-            <tr>
-                <td style="border: 0;">
-                    <label for="numberMultipleSelect">По номерам:</label>
-                </td>
-                <td style="border: 0;">
-                    <select multiple id="numberMultipleSelect" style="width: 100%;" asp-items="@new SelectList(Model.OrderNumbers)"></select>
-                </td>
-                <td style="border: 0;">
-                    <a onclick="clearMultipleSelect('numberMultipleSelect')" class="btn btn-sm btn-outline-info">X</a>
-                </td>
-            </tr>
-            <tr>
-                <td style="border: 0;">
-                    <label for="providerMultipleSelect">По поставщикам:</label>
-                </td>
-                <td style="border: 0;">
-                    <select multiple id="providerMultipleSelect" style="width: 100%;" asp-items="@new SelectList(Model.ProviderNames)"></select>
-                </td>
-                <td style="border: 0;">
-                    <a onclick="clearMultipleSelect('providerMultipleSelect')" class="btn btn-sm btn-outline-info">X</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <form method="post" asp-action="Index">
+        <input type="submit" class="btn btn-sm btn-info filterButton" value="Отфильтровать" />
+        <table>
+            <tbody>
+                <tr>
+                    <td rowspan="2" style="border: 0;">
+                        <span>По дате:</span>
+                    </td>
+                    <td style="border: 0;">
+                        <label for="dateFrom">С:</label>
+                        <input type="datetime-local" name="dateFrom" id="dateFrom" value="@dateFromString" class="bg-dark text-white" style="float: right; width: 180px; margin-left: 5px;" />
+                    </td>
+                    <td style="border: 0;">
+                        <a onclick="clearDate('dateFrom')" class="btn btn-sm btn-outline-info">X</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: 0;">
+                        <label for="dateTo">По:</label>
+                        <input type="datetime-local" name="dateTo" id="dateTo" value="@dateToString" class="bg-dark text-white" style="float: right; width: 180px; margin-left: 5px;" />
+                    </td>
+                    <td style="border: 0;">
+                        <a onclick="clearDate('dateTo')" class="btn btn-sm btn-outline-info">X</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: 0;">
+                        <label for="numberMultipleSelect">По номерам:</label>
+                    </td>
+                    <td style="border: 0;">
+                        <select multiple id="numberMultipleSelect" name="Numbers" style="width: 100%;" asp-items="@Model.OrderNumbers"></select>
+                    </td>
+                    <td style="border: 0;">
+                        <a onclick="clearMultipleSelect('numberMultipleSelect')" class="btn btn-sm btn-outline-info">X</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: 0;">
+                        <label for="providerMultipleSelect">По поставщикам:</label>
+                    </td>
+                    <td style="border: 0;">
+                        <select multiple id="providerMultipleSelect" name="ProviderNames" style="width: 100%;" asp-items="@Model.ProviderNames"></select>
+                    </td>
+                    <td style="border: 0;">
+                        <a onclick="clearMultipleSelect('providerMultipleSelect')" class="btn btn-sm btn-outline-info">X</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
 </aside>
 
 <section>
@@ -94,64 +102,26 @@
 </section>
 
 <script>
-    $(document).ready(function () {
-        
-    });
-
     $('#orderTable').on('click', 'tr', function (e) {
         $(this).find('form').submit();
     });
 
-    window.onload = function exampleFunction() {
-        getReadySelectItems();
-    }
+    window.onload = function onLoad(){
+        setSelectedOptions("#numberMultipleSelect", @Html.Raw(numbers));
+        setSelectedOptions("#providerMultipleSelect", @Html.Raw(providerNames));
 
-    const orderTable = document.getElementById("orderTable").getElementsByTagName('tbody')[0];
-    const newOrderTable = orderTable.cloneNode(true);
-
-    function getReadySelectItems() {
-        clearMultipleSelect('numberMultipleSelect');
-        clearMultipleSelect('providerMultipleSelect');
-        clearDate('dateFrom');
-        clearDate('dateTo');
         $('#numberMultipleSelect').chosen();
         $('#providerMultipleSelect').chosen();
-    }
+    };
 
-    function filter() {
-        let filterNumbers = getFilterItemsById("numberMultipleSelect");
-        let filterProviders = getFilterItemsById("providerMultipleSelect");
-        let filterDateFrom = new Date($('#dateFrom').val());
-        let filterDateTo = new Date($('#dateTo').val());
+    function setSelectedOptions(id, filterItems) {
+        let selectFilterOptions = document.querySelector(id).options;
 
-        removeAllChildNodes(orderTable);
-
-        for (var i = 0, row; row = newOrderTable.rows[i]; i++) {
-            if (isNaN(filterDateFrom) && isNaN(filterDateTo) && filterNumbers == "" && filterProviders == "") {
-                orderTable.appendChild(row.cloneNode(true));
-                continue;
-            }
-
-            let orderDate = new Date(row.cells[2].innerText);
-
-            if (isBetweenTwoDate(orderDate, filterDateFrom, filterDateTo)) {
-                if (filterNumbers.includes(row.cells[1].innerText.trim()) ||
-                    filterProviders.includes(row.cells[3].innerText.trim()) ||
-                    filterNumbers == "" && filterProviders == "") {
-                    orderTable.appendChild(row.cloneNode(true));
-                }
+        for (let i = 0; i < selectFilterOptions.length; i++) {
+            if (filterItems != undefined && filterItems.includes(selectFilterOptions[i].innerText)) {
+                selectFilterOptions[i].selected = true;
             }
         }
-    }
-
-    function isBetweenTwoDate(date, dateFrom, dateTo) {
-        if (date >= dateFrom && isNaN(dateTo) ||
-            date <= dateTo && isNaN(dateFrom) ||
-            date >= dateFrom && date <= dateTo ||
-            isNaN(dateTo) && isNaN(dateFrom)) {
-            return true;
-        }
-        return false;
     }
 
     function clearDate(id) {
@@ -166,36 +136,6 @@
         }
 
         $(`#${id}`).trigger('chosen:updated');
-    }
-
-    function removeAllChildNodes(parent) {
-        while (parent.firstChild) {
-            parent.removeChild(parent.firstChild);
-        }
-    }
-
-    function getFilterItemsById(id) {
-        let selectedNumbers = [];
-
-        for (nameObj of document.getElementById(id).options) {
-            if (nameObj.selected) {
-                selectedNumbers.push(nameObj.value);
-            }
-        }
-
-        return selectedNumbers;
-    }
-
-    function createOrderTable(oldTable) {
-        let newOrderTable = document.createElement("table");
-
-        for (var i = 1, row; row = oldTable.rows[i]; i++) {
-            if (selectedNumbers.includes(number)) {
-                newOrderTable.appendChild(row);
-            }
-        }
-
-        return newOrderTable;
     }
 
 </script>
