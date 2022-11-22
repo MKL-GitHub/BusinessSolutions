@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +13,13 @@ public partial class Order
     [Key]
     public int Id { get; set; }
 
+    [DisplayName("Номер")]
     public string? Number { get; set; }
 
+    [DisplayName("Дата")]
     public DateTime? Date { get; set; }
 
+    [DisplayName("Поставщик")]
     public int ProviderId { get; set; }
 
     [InverseProperty("Order")]

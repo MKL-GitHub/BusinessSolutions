@@ -107,9 +107,9 @@ section {
     counter-reset: rowNumber;
 }
 
-.incrementRow td.increment::before {
-    display: table-cell;
-    counter-increment: rowNumber;
-    content: counter(rowNumber);
-    padding-top: 0.5em;
-}
+    .incrementRow td.increment::before {
+        display: table-cell;
+        counter-increment: rowNumber;
+        content: counter(rowNumber);
+        padding-top: 0.5em;
+    }

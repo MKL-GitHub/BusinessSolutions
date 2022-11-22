@@ -39,6 +39,7 @@ namespace BusinessSolutions.Controllers
         [HttpGet]
         public IActionResult Create(int? id)
         {
+            TempData["success"] = null;
             CreateViewModel createViewModel = new(_context, id);
 
             return View(createViewModel);
@@ -68,12 +69,14 @@ namespace BusinessSolutions.Controllers
 
             var orderItems = new List<OrderItem>();
 
-            foreach (OrderItem orderItemElement in order.OrderItems)
+            foreach (OrderItem item in order.OrderItems)
             {
+                if (item.Name == null && item.Unit == null && item.Quantity == null) continue;
+
                 OrderItem orderItem;
                 if (dbOrder.OrderItems.FirstOrDefault(p => p.Id == dbOrder.Id) is OrderItem)
                 {
-                    orderItem = orderItemElement;
+                    orderItem = item;
                 }
                 else
                 {
@@ -81,9 +84,9 @@ namespace BusinessSolutions.Controllers
                     orderItems.Add(orderItem);
                 }
 
-                orderItem.Name = orderItemElement.Name;
-                orderItem.Quantity = orderItemElement.Quantity;
-                orderItem.Unit = orderItemElement.Unit;
+                orderItem.Name = item.Name;
+                orderItem.Quantity = item.Quantity;
+                orderItem.Unit = item.Unit;
                 orderItem.OrderId = order.Id;
                 orderItem.Order = dbOrder;
             }
