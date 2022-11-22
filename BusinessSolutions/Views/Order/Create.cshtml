@@ -1,0 +1,122 @@
+﻿@model BusinessSolutions.ViewModels.CreateViewModel;
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<partial name="_Notification" />
+
+<header>Добавление/Редактирование заказа</header>
+
+<section class="detailsSection">
+    <form asp-action="Create" method="post">
+        <table>
+            <tbody>
+                <tr>
+                    <th>
+                        <label asp-for="Order.Number" class="control-label"></label>
+                        <input type="hidden" name="Order.Id" value="@Model.Order.Id" />
+                    </th>
+                    <td>
+                        <input asp-for="Order.Number" class="form-control bg-dark text-white inputOrder" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label asp-for="Order.Date" class="control-label"></label>
+                    </th>
+                    <td>
+                        <input asp-for="Order.Date" class="form-control bg-dark text-white inputOrder" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <label asp-for="Order.ProviderId" class="control-label"></label>
+                    </th>
+                    <td>
+                        <select asp-for="Order.ProviderId" class="form-control bg-dark text-white inputOrder" asp-items="@Model.Providers">
+                            <option disabled selected>-- выберие поставщика --</option>
+                        </select>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <h3 style="margin-bottom: 20px; margin-top: 20px;">Элементы заказа</h3>
+        <table class="table table-sm table-dark incrementRow" id="orderItemsTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th style="padding-left: 15px;">Название</th>
+                    <th style="padding-left: 15px;">Продукт</th>
+                    <th style="padding-left: 15px;">Количество</th>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (int i = 0; i < Model.Order.OrderItems.Count; i++)
+                    {
+                        <tr id="row-@i">
+                            <td class="increment">
+                                <input type="hidden" name="Order.OrderItems.Index" value="index{@i}" />
+                                <input type="hidden" name="Order.OrderItems[index{@i}].Id" value="@Model.Order.OrderItems.ElementAt(i).Id" />
+                            </td>
+                            <td>
+                                <input name="Order.OrderItems[index{@i}].Name" value="@Model.Order.OrderItems.ElementAt(i).Name" class="form-control bg-dark text-white inputOrderItem" />
+                            </td>
+                            <td>
+                                <input name="Order.OrderItems[index{@i}].Unit" value="@Model.Order.OrderItems.ElementAt(i).Unit" class="form-control bg-dark text-white inputOrderItem" />
+                            </td>
+                            <td>
+                                <input name="Order.OrderItems[index{@i}].Quantity" value="@Model.Order.OrderItems.ElementAt(i).Quantity" class="form-control bg-dark text-white inputOrderItem" />
+                            </td>
+                            <td align="center">
+                                <a onclick="deleteOrderItem(@i)" class="btn btn-sm btn-outline-danger verticalAlignToCenter">Удалить</a>
+                            </td>
+                        </tr>
+                    }
+                    <tr>
+                        <td colspan="5">
+                            <a onclick="addOrderItemRow()" class="btn btn-sm btn-outline-primary addNewButton">Добавить элемент заказа</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <input type="submit" value="Сохранить" class="btn btn-success" />
+    </form>
+</section>
+
+<script>
+    function addOrderItemRow() {
+        const orderItemsTable = document.getElementById("orderItemsTable").getElementsByTagName('tbody')[0];
+        let newOrderItemIndex = document.createElement("input");
+        let newRowIndex = orderItemsTable.rows.length - 1;
+        let newRow = orderItemsTable.insertRow(newRowIndex);
+        newRow.id = `row-${newRowIndex}`;
+
+        newOrderItemIndex.type = "hidden";
+        newOrderItemIndex.name = "Order.OrderItems.Index";
+        newOrderItemIndex.value = `index${newRowIndex}`;
+
+        newRow.insertCell(0).className = "increment";
+        newRow.insertCell(1).innerHTML = `<input name="Order.OrderItems[index${newRowIndex}].Name" class="form-control bg-dark text-white inputOrderItem">`;
+        newRow.insertCell(2).innerHTML = `<input name="Order.OrderItems[index${newRowIndex}].Unit" class="form-control bg-dark text-white inputOrderItem">`;
+        newRow.insertCell(3).innerHTML = `<input name="Order.OrderItems[index${newRowIndex}].Quantity" class="form-control bg-dark text-white inputOrderItem">`;
+        newRow.insertCell(4).innerHTML = `<a onclick="deleteOrderItem(${newRowIndex})" class="btn btn-sm btn-outline-danger verticalAlignToCenter">Удалить</a>`;
+
+        orderItemsTable.appendChild(newOrderItemIndex);
+    }
+
+    function deleteOrderItem(id) {
+        document.querySelector(`#row-${id}`).remove();
+    }
+</script>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

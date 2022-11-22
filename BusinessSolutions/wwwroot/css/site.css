@@ -1,0 +1,115 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+    background: #222
+}
+
+header {
+    padding: 30px;
+    text-align: center;
+    font-size: 35px;
+    color: white;
+}
+
+aside {
+    float: right;
+    padding-left: 60px;
+    width: 35%;
+    color: white;
+}
+
+    aside td {
+        padding: 5px;
+    }
+
+section {
+    width: 65%;
+}
+
+.detailsSection {
+    color: white;
+    margin-left: auto;
+    margin-right: auto;
+    width: 60%;
+}
+
+    .detailsSection input, select {
+        margin: 10px;
+    }
+
+    .detailsSection .head {
+        font-size: 20px;
+        margin-bottom: 30px;
+        margin-top: 30px;
+    }
+
+        .detailsSection .head td {
+            padding: 10px;
+            padding-right: 30px;
+        }
+
+.btn-right {
+    float: right;
+}
+
+    .btn-right a {
+        margin: 10px;
+    }
+
+.filterButton {
+    margin-bottom: 20px;
+}
+
+.addNewButton {
+    float: right;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.inputOrder {
+    border-radius: 4px;
+    border: 1px solid #555;
+}
+
+.inputOrderItem {
+    width: 95%;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid #333;
+    padding: 0;
+}
+
+.verticalAlignToCenter {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.rowNumberVerticalCenter {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.incrementRow {
+    counter-reset: rowNumber;
+}
+
+.incrementRow td.increment::before {
+    display: table-cell;
+    counter-increment: rowNumber;
+    content: counter(rowNumber);
+    padding-top: 0.5em;
+}
