@@ -11,34 +11,34 @@
 <a asp-action="Index" class="btn btn-close-white">Вернуться к заказам</a>
 <header>Информация о заказе</header>
 <aside>
-    <form asp-action="Details" asp-route-id=@Model.Order.Id >
-        <input type ="submit" class="btn btn-sm btn-info filterButton" value="Отфильтровать" />
-    <table>
-        <tbody>
-            <tr>
+    <form asp-action="Details" asp-route-id=@Model.Order.Id>
+        <input type="submit" class="btn btn-sm btn-info filterButton" value="Отфильтровать" />
+        <table>
+            <tbody>
+                <tr>
                     <td style="border: 0;">
-                    <label for="numberMultipleSelect">По названиям:</label>
-                </td>
-                <td style="border: 0; width: 60%;">
+                        <label for="numberMultipleSelect">По названиям:</label>
+                    </td>
+                    <td style="border: 0; width: 60%;">
                         <select multiple id="orderItemNamesSelect" name="orderItemNames" style="width: 100%;" asp-items="@Model.OrderItemNames"></select>
-                </td>
-                <td style="border: 0;">
+                    </td>
+                    <td style="border: 0;">
                         <a onclick="clearMultipleSelect('orderItemNamesSelect')" class="btn btn-sm btn-outline-light">X</a>
-                </td>
-            </tr>
-            <tr>
-                <td style="border: 0;">
-                    <label for="providerMultipleSelect">По продуктам:</label>
-                </td>
-                <td style="border: 0;">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: 0;">
+                        <label for="providerMultipleSelect">По продуктам:</label>
+                    </td>
+                    <td style="border: 0;">
                         <select multiple id="orderItemUnitsSelect" name="orderItemUnits" style="width: 100%;" asp-items="@Model.OrderItemUnits"></select>
-                </td>
-                <td style="border: 0;">
+                    </td>
+                    <td style="border: 0;">
                         <a onclick="clearMultipleSelect('orderItemUnitsSelect')" class="btn btn-sm btn-outline-light">X</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </form>
 </aside>
 
@@ -90,18 +90,18 @@
             @{
                 foreach (var item in Model.FilteredOrderItems)
                 {
-                                <tr>
-                                    <td class="increment"></td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Name)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Unit)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Quantity)
-                                    </td>
-                                </tr>
+                    <tr>
+                        <td class="increment"></td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Unit)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Quantity)
+                        </td>
+                    </tr>
                 }
             }
         </tbody>

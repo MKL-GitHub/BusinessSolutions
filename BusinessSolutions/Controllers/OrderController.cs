@@ -74,7 +74,7 @@ namespace BusinessSolutions.Controllers
             dbOrder.Provider = _context.Providers.First(p => p.Id == order.ProviderId);
             dbOrder.ProviderId = order.ProviderId;
 
-            var orderItems = new List<OrderItem>();
+            List<OrderItem> orderItems = new();
 
             foreach (OrderItem item in order.OrderItems)
             {

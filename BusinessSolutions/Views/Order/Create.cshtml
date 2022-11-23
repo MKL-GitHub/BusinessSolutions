@@ -2,9 +2,6 @@
 
 @{
     ViewData["Title"] = "Create";
-
-    var something = Model.Order;
-    var sddsdsd = 0;
 }
 
 <partial name="_Notification" />
@@ -59,35 +56,35 @@
                 @{
                     for (int i = 0; i < Model.Order.OrderItems.Count; i++)
                     {
-                            <tr id="row-@i">
-                                <td class="increment">
-                                    <input type="hidden" name="Order.OrderItems.Index" value="index{@i}" />
-                                    <input type="hidden" name="Order.OrderItems[index{@i}].Id" value="@Model.Order.OrderItems.ElementAt(i).Id" />
-                                </td>
-                                <td>
-                                    <input name="Order.OrderItems[index{@i}].Name" value="@Model.Order.OrderItems.ElementAt(i).Name" class="form-control bg-dark text-white inputOrderItem" />
-                                </td>
-                                <td>
-                                    <input name="Order.OrderItems[index{@i}].Unit" value="@Model.Order.OrderItems.ElementAt(i).Unit" class="form-control bg-dark text-white inputOrderItem" />
-                                </td>
-                                <td>
-                                    <input name="Order.OrderItems[index{@i}].Quantity" value="@Model.Order.OrderItems.ElementAt(i).Quantity" class="form-control bg-dark text-white inputOrderItem" />
-                                </td>
-                                <td align="center">
-                                    <a onclick="deleteOrderItem(@i)" class="btn btn-sm btn-outline-danger verticalAlignToCenter">Удалить</a>
-                                </td>
-                            </tr>
-                    }
-                        <tr>
-                            <td colspan="5">
-                                <a onclick="addOrderItemRow()" class="btn btn-sm btn-outline-primary addNewButton">Добавить элемент заказа</a>
+                        <tr id="row-@i">
+                            <td class="increment">
+                                <input type="hidden" name="Order.OrderItems.Index" value="index{@i}" />
+                                <input type="hidden" name="Order.OrderItems[index{@i}].Id" value="@Model.Order.OrderItems.ElementAt(i).Id" />
+                            </td>
+                            <td>
+                                <input name="Order.OrderItems[index{@i}].Name" value="@Model.Order.OrderItems.ElementAt(i).Name" class="form-control bg-dark text-white inputOrderItem" />
+                            </td>
+                            <td>
+                                <input name="Order.OrderItems[index{@i}].Unit" value="@Model.Order.OrderItems.ElementAt(i).Unit" class="form-control bg-dark text-white inputOrderItem" />
+                            </td>
+                            <td>
+                                <input name="Order.OrderItems[index{@i}].Quantity" value="@Model.Order.OrderItems.ElementAt(i).Quantity" class="form-control bg-dark text-white inputOrderItem" />
+                            </td>
+                            <td align="center">
+                                <a onclick="deleteOrderItem(@i)" class="btn btn-sm btn-outline-danger verticalAlignToCenter">Удалить</a>
                             </td>
                         </tr>
+                    }
+                    <tr>
+                        <td colspan="5">
+                            <a onclick="addOrderItemRow()" class="btn btn-sm btn-outline-primary addNewButton">Добавить элемент заказа</a>
+                        </td>
+                    </tr>
                 }
             </tbody>
         </table>
 
-        <input type="submit" value="Сохранить" class="btn btn-success" style="margin-left: 0;"/>
+        <input type="submit" value="Сохранить" class="btn btn-success" style="margin-left: 0;" />
     </form>
 </section>
 

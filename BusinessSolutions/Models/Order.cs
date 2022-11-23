@@ -17,9 +17,11 @@ public partial class Order
     [DisplayName("Номер")]
     public string? Number { get; set; }
 
+    [Required]
     [DisplayName("Дата")]
-    public DateTime Date { get; set; }
+    public DateTime? Date { get; set; }
 
+    [Required]
     [DisplayName("Поставщик")]
     public int ProviderId { get; set; }
 
