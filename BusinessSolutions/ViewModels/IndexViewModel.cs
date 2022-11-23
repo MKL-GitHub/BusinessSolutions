@@ -6,15 +6,30 @@ namespace BusinessSolutions.ViewModels;
 
 public class IndexViewModel
 {
-    public IndexViewModel(BusinessSolutionsContext context, IEnumerable<Order> orders, OrderFilterViewModel? filter = null)
+    public IndexViewModel(BusinessSolutionsContext context, OrderFilterViewModel filter)
     {
-        Orders = orders;
+        Filter = filter;
         OrderNumbers = new(context.Orders.Select(p => p.Number).Distinct());
         ProviderNames = new(context.Providers.Select(p => p.Name));
-        Filter = filter != null ? filter : new();
+
+        foreach (var order in context.Orders.OrderByDescending(p => p.Date))
+        {
+            if (filter.DateFrom == null && filter.DateTo == null ||
+                filter.DateFrom == null && order.Date <= filter.DateTo ||
+                filter.DateTo == null && order.Date >= filter.DateFrom ||
+                order.Date >= filter.DateFrom && order.Date <= filter.DateTo)
+            {
+                if (filter.Numbers == null && filter.ProviderNames == null ||
+                    filter.Numbers != null && filter.Numbers.Contains(order.Number) ||
+                    filter.ProviderNames != null && filter.ProviderNames.Contains(order.Provider.Name))
+                {
+                    Orders.Add(order);
+                }
+            }
+        }
     }
 
-    public IEnumerable<Order> Orders { get; set; } = new List<Order>();
+    public List<Order> Orders { get; set; } = new();
 
     public SelectList OrderNumbers { get; set; }
 

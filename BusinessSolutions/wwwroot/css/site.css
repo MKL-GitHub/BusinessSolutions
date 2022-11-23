@@ -42,9 +42,6 @@ section {
 
 .detailsSection {
     color: white;
-    margin-left: auto;
-    margin-right: auto;
-    width: 60%;
 }
 
     .detailsSection input, select {
@@ -54,7 +51,6 @@ section {
     .detailsSection .head {
         font-size: 20px;
         margin-bottom: 30px;
-        margin-top: 30px;
     }
 
         .detailsSection .head td {
@@ -62,12 +58,21 @@ section {
             padding-right: 30px;
         }
 
+.toCenter {
+    display: flex;
+    justify-content: center;
+}
+
+    .toCenter div {
+        margin: 5px;
+    }
+
 .btn-right {
     float: right;
 }
 
     .btn-right a {
-        margin: 10px;
+        margin-right: 20px;
     }
 
 .filterButton {

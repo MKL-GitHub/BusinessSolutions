@@ -1,67 +1,51 @@
-﻿@model BusinessSolutions.ViewModels.DetailsViewModel
+﻿@using System.Text.Json
+@model BusinessSolutions.ViewModels.DetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
+
+    string names = Model.Filter.OrderItemNames is IEnumerable<string> orderItemNames ? JsonSerializer.Serialize(orderItemNames) : "";
+    string units = Model.Filter.OrderItemUnits is IEnumerable<string> orderItemUnits ? JsonSerializer.Serialize(orderItemUnits) : "";
 }
 
 <a asp-action="Index" class="btn btn-close-white">Вернуться к заказам</a>
 <header>Информация о заказе</header>
 <aside>
-    <div onclick="filter()" class="btn btn-sm btn-info filterButton">Отфильтровать</div>
+    <form asp-action="Details" asp-route-id=@Model.Order.Id >
+        <input type ="submit" class="btn btn-sm btn-info filterButton" value="Отфильтровать" />
     <table>
         <tbody>
             <tr>
-                <td rowspan="2" style="border: 0;">
-                    <span>По дате:</span>
+                    <td style="border: 0;">
+                    <label for="numberMultipleSelect">По названиям:</label>
+                </td>
+                <td style="border: 0; width: 60%;">
+                        <select multiple id="orderItemNamesSelect" name="orderItemNames" style="width: 100%;" asp-items="@Model.OrderItemNames"></select>
                 </td>
                 <td style="border: 0;">
-                    <label for="dateFrom">С:</label>
-                    <input type="datetime-local" id="dateFrom" class="bg-dark text-white" style="float: right; width: 180px; margin-left: 5px;" />
-
-                </td>
-                <td style="border: 0;">
-                    <a onclick="clearDate('dateFrom')" class="btn btn-sm btn-outline-info">X</a>
+                        <a onclick="clearMultipleSelect('orderItemNamesSelect')" class="btn btn-sm btn-outline-light">X</a>
                 </td>
             </tr>
             <tr>
                 <td style="border: 0;">
-                    <label for="dateTo">По:</label>
-                    <input type="datetime-local" id="dateTo" class="bg-dark text-white" style="float: right; width: 180px; margin-left: 5px;" />
+                    <label for="providerMultipleSelect">По продуктам:</label>
                 </td>
                 <td style="border: 0;">
-                    <a onclick="clearDate('dateTo')" class="btn btn-sm btn-outline-info">X</a>
-                </td>
-            </tr>
-            <tr>
-                <td style="border: 0;">
-                    <label for="numberMultipleSelect">По номерам:</label>
+                        <select multiple id="orderItemUnitsSelect" name="orderItemUnits" style="width: 100%;" asp-items="@Model.OrderItemUnits"></select>
                 </td>
                 <td style="border: 0;">
-                    <select multiple id="numberMultipleSelect" style="width: 100%;" asp-items="@Model.OrderItemNames"></select>
-                </td>
-                <td style="border: 0;">
-                    <a onclick="clearMultipleSelect('numberMultipleSelect')" class="btn btn-sm btn-outline-info">X</a>
-                </td>
-            </tr>
-            <tr>
-                <td style="border: 0;">
-                    <label for="providerMultipleSelect">По поставщикам:</label>
-                </td>
-                <td style="border: 0;">
-                    <select multiple id="providerMultipleSelect" style="width: 100%;" asp-items="@Model.OrderItemUnits"></select>
-                </td>
-                <td style="border: 0;">
-                    <a onclick="clearMultipleSelect('providerMultipleSelect')" class="btn btn-sm btn-outline-info">X</a>
+                        <a onclick="clearMultipleSelect('orderItemUnitsSelect')" class="btn btn-sm btn-outline-light">X</a>
                 </td>
             </tr>
         </tbody>
     </table>
+    </form>
 </aside>
 
 <section class="detailsSection">
     <div class="btn-right">
-        <a asp-action="Create" asp-route-id="@Model.Order.Id" class="btn btn-sm btn-outline-info">Редактировать</a>
-        <a asp-action="Delete" asp-route-id="@Model.Order.Id" class="btn btn-sm btn-outline-danger">Удалить</a>
+        <a asp-action="Create" asp-route-id="@Model.Order.Id" class="btn btn-sm btn-info">Редактировать</a>
+        <a asp-action="Delete" asp-route-id="@Model.Order.Id" class="btn btn-sm btn-danger">Удалить</a>
     </div>
 
     <table class="head">
@@ -104,22 +88,56 @@
         </thead>
         <tbody>
             @{
-                foreach (var item in Model.Order.OrderItems)
+                foreach (var item in Model.FilteredOrderItems)
                 {
-                    <tr>
-                        <td class="increment"></td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Unit)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Quantity)
-                        </td>
-                    </tr>
+                                <tr>
+                                    <td class="increment"></td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Unit)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Quantity)
+                                    </td>
+                                </tr>
                 }
             }
         </tbody>
     </table>
 </section>
+<script>
+    window.onload = function onLoad() {
+        setSelectedOptions("#orderItemNamesSelect", @Html.Raw(names));
+        setSelectedOptions("#orderItemUnitsSelect", @Html.Raw(units));
+
+        $('#orderItemNamesSelect').chosen();
+        $('#orderItemUnitsSelect').chosen();
+    };
+
+    function setSelectedOptions(id, filterItems) {
+        let selectFilterOptions = document.querySelector(id).options;
+
+        for (let i = 0; i < selectFilterOptions.length; i++) {
+            if (filterItems != undefined && filterItems.includes(selectFilterOptions[i].innerText)) {
+                selectFilterOptions[i].selected = true;
+            }
+        }
+    }
+
+    function clearDate(id) {
+        $(`#${id}`)[0].value = '';
+    }
+
+    function clearMultipleSelect(id) {
+        for (let item of document.getElementById(id).options) {
+            if (item.selected) {
+                item.selected = false;
+            }
+        }
+
+        $(`#${id}`).trigger('chosen:updated');
+    }
+
+</script>
