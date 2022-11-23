@@ -9,11 +9,13 @@ public partial class BusinessSolutionsContext : DbContext
 {
     public BusinessSolutionsContext()
     {
+        
     }
 
     public BusinessSolutionsContext(DbContextOptions<BusinessSolutionsContext> options)
         : base(options)
     {
+        Database.EnsureCreated();
     }
 
     public virtual DbSet<Order> Orders { get; set; }
